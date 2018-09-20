@@ -18,13 +18,13 @@ class limit_purchase
 
 		$sql = "SELECT *
 			FROM mod_limit_purchase_config";
-		$result = mysql_query($sql);
+		$result = mysqli_query($sql);
 
-		while($config_details = mysql_fetch_assoc($result))
+		while($config_details = mysqli_fetch_assoc($result))
 		{
 			$this->config[$config_details['name']] = $config_details['value'];
 		}
-		mysql_free_result($result);
+		mysqli_free_result($result);
 	}
 
 	function setConfig($name, $value)
@@ -32,15 +32,15 @@ class limit_purchase
 		if(isset($this->config[$name]))
 		{
 			$sql = "UPDATE mod_limit_purchase_config
-				SET value = '" . mysql_escape_string($value) . "'
-				WHERE name = '" . mysql_escape_string($name) . "'";
-			$result = mysql_query($sql);
+				SET value = '" . mysqli_real_escape_string($value) . "'
+				WHERE name = '" . mysqli_real_escape_string($name) . "'";
+			$result = mysqli_query($sql);
 		}
 		else
 		{
 			$sql = "INSERT INTO mod_limit_purchase_config (`name`,`value`) VALUES
-				('" . mysql_escape_string($name) . "','" . mysql_escape_string($value) . "')";
-			$result = mysql_query($sql);
+				('" . mysqli_real_escape_string($name) . "','" . mysqli_real_escape_string($value) . "')";
+			$result = mysqli_query($sql);
 		}
 
 		$this->config[$name] = $value;
@@ -55,13 +55,13 @@ class limit_purchase
 			INNER JOIN tblproducts as p
 			ON p.id = l.product_id
 			WHERE l.active = 1";
-		$result = mysql_query($sql);
+		$result = mysqli_query($sql);
 
-		while($limits = mysql_fetch_assoc($result))
+		while($limits = mysqli_fetch_assoc($result))
 		{
 			$output[$limits['product_id']] = array('limit' => $limits['limit'], 'error' => $limits['error']);
 		}
-		mysql_free_result($result);
+		mysqli_free_result($result);
 
 		return $output;
 	}

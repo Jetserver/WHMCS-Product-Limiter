@@ -32,8 +32,8 @@ function limit_purchase($vars)
 							FROM tblhosting
 							WHERE userid = '{$user_id}'
 							AND packageid = '{$product_details['pid']}'";
-						$result = mysql_query($sql);
-						$product = mysql_fetch_assoc($result);
+						$result = mysqli_query($sql);
+						$product = mysqli_fetch_assoc($result);
 
 						$counter[$product_details['pid']] = intval($product['total_products']);
 					}
@@ -46,8 +46,8 @@ function limit_purchase($vars)
 						$sql = "SELECT name
 							FROM tblproducts
 							WHERE id = '{$product_details['pid']}'";
-						$result = mysql_query($sql);
-						$delete[$product_details['pid']] = mysql_fetch_assoc($result);
+						$result = mysqli_query($sql);
+						$delete[$product_details['pid']] = mysqli_fetch_assoc($result);
 					}
 
 					// if you want to automatically delete the unwanted products from the cart, remark the line below
@@ -72,7 +72,7 @@ function limit_purchase_delete($vars)
 	$sql = "DELETE
 		FROM mod_limit_purchase
 		WHERE product_id = '{$vars['pid']}'";
-	mysql_query($sql);
+	mysqli_query($sql);
 }
 
 add_hook('ShoppingCartValidateCheckout', 0, 'limit_purchase');
