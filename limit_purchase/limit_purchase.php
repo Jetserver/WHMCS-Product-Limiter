@@ -21,7 +21,7 @@ function limit_purchase_activate()
 			`value` text NOT NULL,
 		PRIMARY KEY (`name`)
 		) ENGINE=MyISAM  DEFAULT CHARSET=utf8";
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
 	if($result) 
 	{
@@ -29,11 +29,11 @@ function limit_purchase_activate()
 			('localkey', ''),
 			('version_check', '0'),
 			('version_new', '')";
-		$result = mysql_query($sql);
+		$result = mysqli_query($sql);
 	}
 	else
 	{
-		$error[] = "Can't create the table `mod_limit_purchase_config`. SQL Error: " . mysql_error();
+		$error[] = "Can't create the table `mod_limit_purchase_config`. SQL Error: " . mysqli_error();
 	}
 
    	$sql = "CREATE TABLE IF NOT EXISTS `mod_limit_purchase` (
@@ -44,9 +44,9 @@ function limit_purchase_activate()
 			`active` tinyint(1) NOT NULL DEFAULT '0',
 		PRIMARY KEY (`id`)
 		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
-	if(!$result) $error[] = "Can't create the table `mod_limit_purchase`. SQL Error: " . mysql_error();
+	if(!$result) $error[] = "Can't create the table `mod_limit_purchase`. SQL Error: " . mysqli_error();
 
 	if(sizeof($error))
 	{
@@ -62,14 +62,14 @@ function limit_purchase_activate()
 function limit_purchase_deactivate() 
 {
 	$sql = "DROP TABLE IF EXISTS `mod_limit_purchase`";
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
-	if(!$result) $error[] = "Can't drop the table `mod_limit_purchase`. SQL Error: " . mysql_error();
+	if(!$result) $error[] = "Can't drop the table `mod_limit_purchase`. SQL Error: " . mysqli_error();
 
 	$sql = "DROP TABLE IF EXISTS `mod_limit_purchase_config`";
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
-	if(!$result) $error[] = "Can't drop the table `mod_limit_purchase_config`. SQL Error: " . mysql_error();
+	if(!$result) $error[] = "Can't drop the table `mod_limit_purchase_config`. SQL Error: " . mysqli_error();
 
 	return array(
 		'status'	=> sizeof($error) ? 'error' : 'success',
@@ -86,7 +86,7 @@ function limit_purchase_upgrade($vars)
 				`value` text NOT NULL,
 			PRIMARY KEY (`name`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8";
-		$result = mysql_query($sql);
+		$result = mysqli_query($sql);
 
 		if($result) 
 		{
@@ -94,7 +94,7 @@ function limit_purchase_upgrade($vars)
 				('localkey', ''),
 				('version_check', '0'),
 				('version_new', '')";
-			$result = mysql_query($sql);
+			$result = mysqli_query($sql);
 		}
 	}
 }
@@ -140,7 +140,7 @@ function limit_purchase_output($vars)
 	$product_id 	= intval($_REQUEST['product_id']);
 	$id 		= intval($_REQUEST['id']);
 	$limit 		= intval($_REQUEST['limit']);
-	$error 		= mysql_escape_string($_REQUEST['error']);
+	$error 		= mysqli_real_escape_string($_REQUEST['error']);
 	$active 	= intval($_REQUEST['active']);
 
 	$manage_details = array();
@@ -155,15 +155,15 @@ function limit_purchase_output($vars)
 				$sql = "SELECT id
 					FROM mod_limit_purchase
 					WHERE id = '{$id}'";
-				$result = mysql_query($sql);
-				$limit_details = mysql_fetch_assoc($result);
+				$result = mysqli_query($sql);
+				$limit_details = mysqli_fetch_assoc($result);
 
 				if($limit_details)
 				{
 					$sql = "UPDATE mod_limit_purchase
 						SET active = " . ($action == 'disable' ? 0 : 1) . "
 						WHERE id = '{$id}'";
-					mysql_query($sql);
+					mysqli_query($sql);
 
 					$_SESSION['limit_purchase'] = array(
 						'type'		=> 'success',
@@ -198,16 +198,16 @@ function limit_purchase_output($vars)
 				$sql = "SELECT id
 					FROM tblproducts
 					WHERE id = '{$product_id}'";
-				$result = mysql_query($sql);
-				$product_details = mysql_fetch_assoc($result);
+				$result = mysqli_query($sql);
+				$product_details = mysqli_fetch_assoc($result);
 
 				if($product_details)
 				{
 					$sql = "SELECT id
 						FROM mod_limit_purchase
 						WHERE product_id = '{$product_id}'";
-					$result = mysql_query($sql);
-					$limit_details = mysql_fetch_assoc($result);
+					$result = mysqli_query($sql);
+					$limit_details = mysqli_fetch_assoc($result);
 
 					if(!$limit_details)
 					{
@@ -215,7 +215,7 @@ function limit_purchase_output($vars)
 						{
 							$sql = "INSERT INTO mod_limit_purchase (`product_id`,`limit`,`error`,`active`) VALUES
 								('{$product_id}','{$limit}','{$error}','" . ($active ? 1 : 0) . "')";
-							mysql_query($sql);
+							mysqli_query($sql);
 
 							$_SESSION['limit_purchase'] = array(
 								'type'		=> 'success',
@@ -270,8 +270,8 @@ function limit_purchase_output($vars)
 				$sql = "SELECT id
 					FROM mod_limit_purchase
 					WHERE id = '{$id}'";
-				$result = mysql_query($sql);
-				$limit_details = mysql_fetch_assoc($result);
+				$result = mysqli_query($sql);
+				$limit_details = mysqli_fetch_assoc($result);
 
 				if($limit_details)
 				{
@@ -280,8 +280,8 @@ function limit_purchase_output($vars)
 						$sql = "SELECT id
 							FROM tblproducts
 							WHERE id = '{$product_id}'";
-						$result = mysql_query($sql);
-						$product_details = mysql_fetch_assoc($result);
+						$result = mysqli_query($sql);
+						$product_details = mysqli_fetch_assoc($result);
 
 						if($product_details)
 						{
@@ -290,7 +290,7 @@ function limit_purchase_output($vars)
 								$sql = "UPDATE mod_limit_purchase 
 									SET `product_id` = '{$product_id}', `limit` = '{$limit}', `error` = '{$error}', active = '" . ($active ? 1 : 0) . "'
 									WHERE id = '{$id}'";
-								mysql_query($sql);
+								mysqli_query($sql);
 
 								$_SESSION['limit_purchase'] = array(
 									'type'		=> 'success',
@@ -353,15 +353,15 @@ function limit_purchase_output($vars)
 				$sql = "SELECT id
 					FROM mod_limit_purchase
 					WHERE id = '{$id}'";
-				$result = mysql_query($sql);
-				$limit_details = mysql_fetch_assoc($result);
+				$result = mysqli_query($sql);
+				$limit_details = mysqli_fetch_assoc($result);
 
 				if($limit_details)
 				{
 					$sql = "DELETE
 						FROM mod_limit_purchase
 						WHERE id = '{$id}'";
-					mysql_query($sql);
+					mysqli_query($sql);
 
 					$_SESSION['limit_purchase'] = array(
 						'type'		=> 'success',
@@ -395,16 +395,16 @@ function limit_purchase_output($vars)
 				$sql = "SELECT id
 					FROM mod_limit_purchase
 					WHERE id = '{$id}'";
-				$result = mysql_query($sql);
-				$limit_details = mysql_fetch_assoc($result);
+				$result = mysqli_query($sql);
+				$limit_details = mysqli_fetch_assoc($result);
 
 				if($limit_details)
 				{
 					$sql = "SELECT *
 						FROM mod_limit_purchase
 						WHERE id = '{$id}'";
-					$result = mysql_query($sql);
-					$manage_details = mysql_fetch_assoc($result);
+					$result = mysqli_query($sql);
+					$manage_details = mysqli_fetch_assoc($result);
 				}
 				else
 				{
@@ -432,23 +432,23 @@ function limit_purchase_output($vars)
 
 	$sql = "SELECT *
 		FROM mod_limit_purchase";
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
-	while($row = mysql_fetch_assoc($result))
+	while($row = mysqli_fetch_assoc($result))
 	{
 		if($manage_details['product_id'] != $row['product_id'])
 		{
 			$sql = "SELECT name
 				FROM tblproducts
 				WHERE id = '{$row['product_id']}'";
-			$result2 = mysql_query($sql);
-			$product = mysql_fetch_assoc($result2);
+			$result2 = mysqli_query($sql);
+			$product = mysqli_fetch_assoc($result2);
 
 			$ids[] = $row['product_id'];
 			$limits[] = array_merge($row, array('product_details' => $product));
 		}
 	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 
 	if(isset($_SESSION['limit_purchase']))
 	{
@@ -466,13 +466,13 @@ function limit_purchase_output($vars)
 	$sql = "SELECT id, name
 		FROM tblproducts
 		" . (sizeof($ids) ? "WHERE id NOT IN('" . implode("','", $ids) . "')" : '');
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
-	while($product_details = mysql_fetch_assoc($result))
+	while($product_details = mysqli_fetch_assoc($result))
 	{
 		$products[] = $product_details;
 	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 
 ?>
 	<h2><?php echo (sizeof($manage_details) ? $vars['_lang']['editlimit'] : $vars['_lang']['addlimit']); ?></h2>
